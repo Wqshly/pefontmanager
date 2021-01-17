@@ -39,7 +39,7 @@ export default {
       collapse: false,
       items: [
         {
-          icon: 'el-icon-wqs-shouye',
+          icon: 'cog',
           index: 'home',
           title: '首页'
         },
