@@ -1,44 +1,26 @@
 <template>
-  <div class="header">
+  <div class="header-style">
     <!-- 折叠按钮 -->
     <div class="collapse-btn" @click="collapseChange">
-      <el-tooltip effect="dark" :content="collapse?`展开侧边栏`:`折叠侧边栏`" placement="bottom">
-        <i :class="[collapse?'el-icon-d-arrow-right':'el-icon-d-arrow-left']"></i>
+      <el-tooltip effect="dark" :content="collapse ? `展开侧边栏` : `折叠侧边栏`" placement="bottom">
+        <i :class="[collapse ? 'el-icon-s-unfold' : 'el-icon-s-fold']"></i>
       </el-tooltip>
     </div>
-    <div class="logo">洁时代家政服务项目管理信息平台</div>
-    <div class="header-right">
+    <div class="title-style">
+      <img class="logo-style" src="../../assets/img/logo.png" />
+      <span style="margin-left: 10px;">校园PE网站后台管理系统</span>
+    </div>
+    <div class="right-menu">
       <div class="header-user-control">
-        <!-- 全屏显示 -->
-        <div class="btn-fullscreen" @click="fullScreen">
-          <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
-            <i class="el-icon-rank"></i>
+        <!-- 全屏显示按钮 -->
+        <div class="fullscreen-btn" style="margin-right: 20px;" @click="fullScreen">
+          <el-tooltip effect="dark" :content="fullscreen ? `取消全屏` : `全屏`" placement="bottom">
+            <div>
+              <font-awesome-icon :icon="['fas', fullscreen ? 'compress' : 'expand']"></font-awesome-icon>
+            </div>
           </el-tooltip>
         </div>
-        <!-- 消息中心 -->
-        <div class="message-tips">
-          <el-tooltip effect="dark" :content="message?`有${message}条未读消息`:`消息中心`" placement="bottom">
-            <router-link to="/message">
-              <i class="el-icon-bell"></i>
-            </router-link>
-          </el-tooltip>
-          <!-- 若有消息，则红点提示 -->
-          <span class="message-tips-badge" v-if="message"></span>
-        </div>
-        <!-- 用户头像 -->
-        <div class="user-avatar">
-          <el-image class="img" :src="imgUrl"></el-image>
-        </div>
-        <!-- 用户名下拉菜单 -->
-        <el-dropdown class="user-name" trigger="click" @command="handleCommand">
-                    <span class="el-dropdown-link">
-                        {{username}} <i class="el-icon-caret-bottom"></i>
-                    </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="changeImg">更换头像</el-dropdown-item>
-            <el-dropdown-item divided command="loginOut">退出登录</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <el-button type="text" @click.native="logout">退出登录</el-button>
       </div>
     </div>
   </div>
@@ -64,16 +46,6 @@ export default {
     }
   },
   methods: {
-    async uploadPic (data) {
-      this.$api.requestApi.post('/user/imageUpload/', data)
-        .then(res => {
-          this.registerForm.picLocation = res.data
-          console.log(this.registerForm.picLocation)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
     // 侧边栏折叠
     collapseChange () {
       this.collapse = !this.collapse
@@ -106,36 +78,33 @@ export default {
       }
       this.fullscreen = !this.fullscreen
     },
-    // 用户名下拉菜单选择事件
-    handleCommand (command) {
-      if (command === 'changeImg') {
-      }
-      if (command === 'loginOut') {
-        sessionStorage.removeItem('save_user_id')
-        sessionStorage.removeItem('save_username')
-        this.$router.push('/login')
-      }
+    // 退出登录
+    logout () {
+      this.$api.http.get('/login/logout')
+        .then(res => {
+          sessionStorage.removeItem('userInfo')
+        })
+        .catch(res => {
+          console.log('退出失败')
+        })
+      this.$router.push('/login')
     }
   },
   mounted () {
     if (document.body.clientWidth < 1500) {
       this.collapseChange()
     }
-  },
-  created () {
   }
 }
 </script>
 
 <style scoped lang="less">
-  .header {
-    position: relative;
+  .header-style {
+    position: absolute;
     box-sizing: border-box;
     width: 100%;
     height: 70px;
     font-size: 22px;
-    color: #fff;
-    border-radius: 5px;
     background: rgba(255, 255, 255, .2);
     box-shadow: 3px 3px 6px 3px rgba(0, 0, 0, .1);
   }
@@ -148,33 +117,42 @@ export default {
     line-height: 70px;
   }
 
-  .header .tips {
+  .header-style .title-style {
+    float: left;
+    display: flex;
+    align-items: center;
+    line-height: 70px;
+  }
+
+  .title-style .logo-style {
+    width: 25px;
+    vertical-align: middle;
+  }
+
+  .header-style .right-menu {
+    float: right;
+    height: 100%;
+    padding-right: 20px;
+  }
+
+  .header-style .tips {
     float: left;
     line-height: 70px;
     font-size: 15px;
   }
 
-  .header .hide-tips {
+  .header-style .hide-tips {
     display: none;
-  }
-
-  .header .logo {
-    float: left;
-    line-height: 70px;
-  }
-
-  .header .header-right {
-    float: right;
-    padding-right: 50px;
   }
 
   .header-user-control {
     display: flex;
     height: 70px;
     align-items: center;
+    vertical-align: text-bottom;
   }
 
-  .message-tips, .btn-fullscreen {
+  .message-tips, .fullscreen-btn {
     position: relative;
     width: 30px;
     height: 30px;
@@ -183,8 +161,8 @@ export default {
     cursor: pointer;
   }
 
-  .btn-fullscreen {
-    transform: rotate(45deg);
+  .fullscreen-btn {
+    /*transform: rotate(45deg);*/
     margin-right: 5px;
     font-size: 24px;
   }

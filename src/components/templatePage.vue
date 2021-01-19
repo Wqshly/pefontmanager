@@ -1,11 +1,9 @@
 <template>
-  <div class="fill-contain">
+  <div class="fill-container">
     <v-sidebar></v-sidebar>
-    <div class="content-box" :class="{'content-collapse':collapse}">
-      <v-header></v-header>
-      <div class="content-tags">
-        <v-tags></v-tags>
-      </div>
+    <div class="main-container" :class="{'main-container-collapse':collapse}">
+      <v-header style="z-index: 999"></v-header>
+      <v-tags></v-tags>
       <div class="content">
         <transition name="move" mode="out-in">
           <keep-alive :include="tagsList">
@@ -14,10 +12,10 @@
         </transition>
       </div>
     </div>
-    <div style="min-height: 100%;margin-bottom: -95px;"></div>
-    <div class="main-footer">
-      青岛洁时代&nbsp;&nbsp;山东科技大学校企合作项目&nbsp;&nbsp;&nbsp;&nbsp;
-    </div>
+<!--    <div style="min-height: 100%;margin-bottom: -95px;"></div>-->
+<!--    <div class="main-footer">-->
+<!--      青岛洁时代&nbsp;&nbsp;山东科技大学校企合作项目&nbsp;&nbsp;&nbsp;&nbsp;-->
+<!--    </div>-->
   </div>
 </template>
 
@@ -55,32 +53,34 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
-  .content-box {
+  .main-container {
     position: absolute;
     left: 250px;
     right: 0;
     top: 0;
     bottom: 0;
-    padding-bottom: 60px;
     -webkit-transition: left .3s ease-in-out;
     transition: left .3s ease-in-out;
   }
 
+  .main-container-collapse {
+    left: 65px;
+  }
+
   .content {
-    width: auto;
-    height: 100%;
-    padding: 10px 10px 0 10px;
+    top: 115px;
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 115px);
     overflow-y: hidden;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
+    background-color: #f0f2f5;
   }
 
   .content-tags {
     padding: 0 10px;
-  }
-
-  .content-collapse {
-    left: 65px;
   }
 </style>

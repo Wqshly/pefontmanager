@@ -43,12 +43,22 @@ export default {
       if (item) {
         delItem.path === this.$route.fullPath && this.$router.push(item.path)
       } else {
+        this.tagsList = [{
+          name: 'home',
+          path: '/home',
+          title: '首页'
+
+        }]
         this.$router.push('/')
       }
     },
     // 关闭全部标签
     closeAll () {
-      this.tagsList = []
+      this.tagsList = [{
+        name: 'home',
+        path: '/home',
+        title: '首页'
+      }]
       this.$router.push('/')
     },
     // 关闭其他标签
@@ -112,13 +122,14 @@ export default {
 
 <style scoped>
   .tags {
-    position: relative;
+    position: absolute;
+    top: 75px;
     height: 30px;
+    width: 100%;
     overflow: hidden;
     background: #fff;
     border-radius: 5px;
-    padding-right: 120px;
-    box-shadow: 0 5px 10px #ddd;
+    box-shadow: 10px 5px 10px #ddd;
     background: rgba(255, 255, 255, .6);
   }
 

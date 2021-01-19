@@ -13,6 +13,8 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {fas} from '@fortawesome/free-solid-svg-icons'
 
+import BasicTableTemp from '@/components/tableTemplate/BasicTableTemp'
+
 import api from '@/api/index'
 
 Vue.use(ElementUI)
@@ -22,6 +24,7 @@ Vue.prototype.$api = api
 
 library.add(fas)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('basic-table-temp', BasicTableTemp)
 
 Vue.config.productionTip = false
 
