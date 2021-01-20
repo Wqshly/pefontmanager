@@ -35,14 +35,7 @@ export default {
     return {
       collapse: false,
       fullscreen: false,
-      message: 1,
-      imgUrl: ''
-    }
-  },
-  computed: {
-    username () {
-      let username = sessionStorage.getItem('save_username')
-      return username || this.name
+      message: 1
     }
   },
   methods: {
@@ -83,11 +76,11 @@ export default {
       this.$api.http.get('/login/logout')
         .then(res => {
           sessionStorage.removeItem('userInfo')
+          this.$router.push('/login')
         })
         .catch(res => {
           console.log('退出失败')
         })
-      this.$router.push('/login')
     }
   },
   mounted () {

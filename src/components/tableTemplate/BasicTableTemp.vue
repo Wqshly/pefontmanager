@@ -4,18 +4,18 @@
     <template v-if="tableTools ===true">
       <div class="table-tools-column">
         <el-button-group>
-          <el-button v-if="addButton" style="color: #13ce66;" size="small" @click.native="openAddDialog" icon="el-icon-circle-plus-outline">新增</el-button>
-          <el-button v-if="editButton" style="color: #f7c900;" size="small" @click.native="openEditDialog" icon="el-icon-edit-outline">编辑</el-button>
-          <el-button v-if="deleteButton" style="color: #b9c9c7;" size="small" @click.native="deleteRecord" icon="el-icon-delete" :disabled="this.selectRecord.length === 0">删除</el-button>
-          <el-button v-if="refreshButton" style="color: #12ce66;" size="small" @click.native="refreshRecord" icon="el-icon-refresh-right">刷新</el-button>
-          <el-button v-if="downloadButton" style="color: #12ce66" size="small" @click.native="refreshRecord" icon="el-icon-download">下载</el-button>
-          <el-button v-if="uploadButton" style="color: #12ce66" size="small" @click.native="openImportExcelDialog" icon="el-icon-upload">上传</el-button>
+          <el-button v-if="buttonShow.addButton" style="color: #13ce66;" size="small" @click.native="openAddDialog" icon="el-icon-circle-plus-outline">新增</el-button>
+          <el-button v-if="buttonShow.editButton" style="color: #f7c900;" size="small" @click.native="openEditDialog" icon="el-icon-edit-outline">编辑</el-button>
+          <el-button v-if="buttonShow.deleteButton" style="color: #b9c9c7;" size="small" @click.native="deleteRecord" icon="el-icon-delete" :disabled="this.selectRecord.length === 0">删除</el-button>
+          <el-button v-if="buttonShow.refreshButton" style="color: #12ce66;" size="small" @click.native="refreshRecord" icon="el-icon-refresh-right">刷新</el-button>
+          <el-button v-if="buttonShow.downloadButton" style="color: #12ce66" size="small" @click.native="refreshRecord" icon="el-icon-download">下载</el-button>
+          <el-button v-if="buttonShow.uploadButton" style="color: #12ce66" size="small" @click.native="openImportExcelDialog" icon="el-icon-upload">上传</el-button>
         </el-button-group>
         <div style="float: right">
           <el-input v-model="searchData.content" class="search-box" placeholder="请输入内容搜索" size="small" clearable>
             <template slot="prepend">
               <el-select style="width: 100px;" v-model="searchData.title" placeholder="请选择">
-                <el-option v-for="(item, index) in tableHeaderList"
+                <el-option v-for="(item, index) in searchList"
                            :key="index"
                            :label="item.label"
                            :value="item.value"></el-option>
@@ -39,7 +39,7 @@
                 v-loading="tableLoading"
                 :header-cell-style="{background: '#36507E', color: '#ffffff'}" stripe>
         <!-- 选择框 -->
-        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column v-if="buttonShow.deleteButton" type="selection" width="55"></el-table-column>
         <!-- 序号 -->
         <el-table-column type="index" label="序号" width="60"></el-table-column>
         <!-- 正式内容 -->
@@ -55,17 +55,17 @@
           <template slot-scope="scope">
             <!-- 通过tableHeader.value获取表数据 -->
             <el-popover trigger="hover" placement="top">
-              <p>{{scope.row[tableHeader.value]}}</p>
-              <div slot="reference">{{scope.row[tableHeader.value]}}</div>
+              <p>{{scope.row[tableHeader.value] | dataFormat}}</p>
+              <div slot="reference">{{scope.row[tableHeader.value] | dataFormat}}</div>
             </el-popover>
           </template>
         </el-table-column>
         <!-- 右侧操作栏 -->
-        <el-table-column label="操作" :width="funcBtn.width" v-if="funcBtn.isShow" :fixed="funcBtn.fixed">
+        <el-table-column label="操作" :min-width="funcBtn.minWidth" :width="funcBtn.width" v-if="funcBtn.isShow" :fixed="funcBtn.fixed">
           <template slot-scope="scope">
             <!-- 通过tableHeader.value获取按钮名 -->
             <el-button size="small" v-for="(item, index) in funcBtn.buttons"
-                       @click="btnClick(item.value, scope.$index)" :key="index">
+                       @click="btnClick(item.value, scope.$index)" :icon="item.icon" :key="index">
               {{item.name}}
             </el-button>
           </template>
@@ -142,24 +142,39 @@
 </template>
 
 <script>
+import {formatDate} from '@/commons/date'
+
 export default {
   name: 'BasicTableTemp',
   props: {
-    refreshUrl: {type: String, default: ''},
-    addUrl: {type: String, default: ''},
-    editUrl: {type: String, default: ''},
-    searchUrl: {type: String, default: ''},
-    deleteUrl: {type: String, default: ''},
+    url: {
+      default () {
+        return {
+          refreshUrl: '',
+          addUrl: '',
+          editUrl: '',
+          searchUrl: '',
+          deleteUrl: ''
+        }
+      }
+    },
     tableTools: {type: Boolean, default: true},
-    sortable: {type: Boolean | String, default: 'custom'},
-    addButton: {type: Boolean, default: true},
-    editButton: {type: Boolean, default: true},
-    deleteButton: {type: Boolean, default: true},
-    refreshButton: {type: Boolean, default: true},
-    downloadButton: {type: Boolean, default: true},
-    uploadButton: {type: Boolean, default: true},
+    buttonShow: {
+      default () {
+        return {
+          addButton: true,
+          editButton: true,
+          deleteButton: true,
+          refreshButton: true,
+          downloadButton: true,
+          uploadButton: true
+        }
+      }
+    },
     tableHeaderList: {type: Array, required: true}, // 表头数据
+    searchList: {type: Array, required: true}, // 搜索字段
     tablePK: {default: 'id'}, // 表的主键
+    sortable: {type: Boolean | String, default: 'custom'}, // 是否排序/前端/后端排序
     hidePagination: {type: Boolean, default: false}, // 是否隐藏页码
     funcBtn: {
       default () {
@@ -184,7 +199,7 @@ export default {
       lastObject: {}, // 查询和刷新页面用的Object
       recordTotal: 0, // 数据的总条数
       currentPageNumber: 1, // 当前页
-      pageSize: 10, // 每页显示条数
+      pageSize: 50, // 每页显示条数
       sortField: 'id', // 排序的字段
       sortMethod: 'ascending', // 排序方法(升序、降序、不排序)
       tableLoading: false, // 表格显示loading
@@ -255,12 +270,10 @@ export default {
     // 删除记录(批量删除)
     async deleteRecord () {
       const selectMultipleId = this.selectRecord.map(item => item[this.tablePK])
-      console.log(this.deleteUrl)
-      console.log(selectMultipleId)
       await this.$confirm('确认删除 "选中的 ' + selectMultipleId.length + ' 条" 记录吗？', '提示', {type: 'warning'})
         .then(() => {
           this.tableLoading = true
-          this.$api.http.postJson(this.deleteUrl, selectMultipleId)
+          this.$api.http.postJson(this.url.deleteUrl, selectMultipleId)
             .then(res => {
               this.tableLoading = false
               this.refreshRecord()
@@ -278,15 +291,17 @@ export default {
       this.getRecord(null)
     },
     search () {
-      if (this.searchData.content === '') {
+      if (this.searchData.title === '') {
+        this.$message.warning('请勾选要筛选的项')
+      } else if (this.searchData.content === '') {
         this.$message.warning('请输入搜索内容！')
       } else {
-        this.getRecord(this.searchUrl + this.searchData.title + '/' + this.searchData.content)
+        this.getRecord(this.url.searchUrl + this.searchData.title + '/' + this.searchData.content)
       }
     },
     reset () {
-      this.searchData = ''
-      this.getRecord(this.refreshUrl)
+      this.searchData = {title: '', content: ''}
+      this.getRecord(this.url.refreshUrl)
     },
     // 打开上传Excel页面
     openImportExcelDialog () {
@@ -318,7 +333,7 @@ export default {
     },
     // 获取记录
     getRecord (url) {
-      console.log(url)
+      this.selectRow = null
       this.selectRecord = []
       let obj = {}
       if (url === null) {
@@ -390,6 +405,15 @@ export default {
       }
       this.selectRow = this.tableData[this.tableDataIndex]
       this.$emit('click-row', Object.assign({}, this.tableData[this.tableDataIndex]))
+    }
+  },
+  filters: {
+    dataFormat (data) {
+      if (isNaN(data) && !isNaN(Date.parse(data))) {
+        const date = new Date(data)
+        return formatDate(date, 'yyyy年MM月dd日')
+      }
+      return data
     }
   }
 }

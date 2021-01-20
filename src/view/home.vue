@@ -5,7 +5,11 @@
 
 <script>
 export default {
-  name: 'home'
+  name: 'home',
+  methods: {
+  },
+  mounted () {
+  }
 }
 </script>
 

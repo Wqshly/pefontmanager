@@ -60,7 +60,6 @@ export default {
           if (!this.loginDisable) {
             this.loginDisable = true
             let url = '/login/loginManager'
-            console.log(this.loginForm)
             this.$api.http.post(url, this.loginForm)
               .then(res => {
                 console.log(res.data)

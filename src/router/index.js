@@ -36,6 +36,13 @@ export default new Router({
       component: login
     },
     {
+      path: '/test',
+      component: test,
+      meta: {
+        title: '测试'
+      }
+    },
+    {
       path: '/',
       component: templatePage,
       children: [
@@ -51,13 +58,6 @@ export default new Router({
           component: schoolManage,
           meta: {
             title: '学校管理'
-          }
-        },
-        {
-          path: '/test',
-          component: test,
-          meta: {
-            title: '测试'
           }
         }
       ]

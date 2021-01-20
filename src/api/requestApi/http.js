@@ -29,6 +29,8 @@ service.interceptors.response.use(res => {
   } else if (res.data.code === 0) {
     console.log(res.data)
     return res.data
+  } else if (res.data.code === 1) {
+    Message.error({message: '未知错误，请联系管理员!'})
   } else if (res.data.code === 2) {
     Message.error({message: res.data.msg})
   }
