@@ -30,6 +30,19 @@ Vue.component('multilevel-linkage', MultilevelLinkage)
 
 Vue.config.productionTip = false
 
+// 使用钩子函数，完成权限控制
+router.beforeEach((to, from, next) => {
+  var userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+  if (!userInfo && to.path !== '/login') {
+    next('/login')
+  } else {
+    window.scrollTo(0, 0)
+    if (to.path !== from.path) {
+      next()
+    }
+  }
+})
+
 new Vue({
   router,
   render: h => h(App)

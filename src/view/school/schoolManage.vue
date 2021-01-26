@@ -228,6 +228,7 @@ export default {
             })
               .then(({value}) => {
                 this.addForm.password = value
+                console.log(this.addForm)
                 this.$api.http.postJson(this.url.addUrl, JSON.stringify(this.addForm))
                   .then(res => {
                     this.$message.success('添加成功！')
@@ -259,7 +260,7 @@ export default {
         if (valid) {
           this.$api.http.postJson(this.url.editUrl, JSON.stringify(this.editForm.school))
             .then(res => {
-              this.$message.success('添加成功！')
+              this.$message.success('修改成功！')
               this.$refs[this.refName].getRecord(this.url.refreshUrl)
             })
             .catch(err => {

@@ -362,6 +362,7 @@ export default {
     // 点击某一行
     rowClick (row, column, event) {
       // assign 使后者的值赋到前者中。
+      console.log(Object.assign({}, row))
       this.$emit('click-row', Object.assign({}, row))
       this.selectRow = row
       this.tableDataIndex = this.tableData.indexOf(this.selectRow)
