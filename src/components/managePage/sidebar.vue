@@ -50,11 +50,6 @@ export default {
         },
         {
           icon: 'user',
-          index: '/test',
-          title: '测试'
-        },
-        {
-          icon: 'user',
           index: 'app-manage',
           title: '移动端管理',
           subs: [

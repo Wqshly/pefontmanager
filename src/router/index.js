@@ -15,8 +15,6 @@ const home = () => Promise.resolve(require('@/view/home'))
 // 学校管理
 const schoolManage = () => Promise.resolve(require('@/view/school/schoolManage'))
 
-const test = () => Promise.resolve(require('@/view/test'))
-
 // 多次点击同一路由时，执行catch，避免报错。
 const routerPush = Router.prototype.push
 
@@ -34,13 +32,6 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: login
-    },
-    {
-      path: '/test',
-      component: test,
-      meta: {
-        title: '测试'
-      }
     },
     {
       path: '/',
